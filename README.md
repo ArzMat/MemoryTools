@@ -1,13 +1,29 @@
-# memory-tools
+<p align="center">
+  <img src="assets/memory-tools-icon.svg" width="112" alt="Memory Tools icon">
+</p>
 
-A shared, persistent memory for coding agents. Claude Code and Codex read and
-update the same folder of Markdown notes about the user, their projects and
-their decisions, without a server or a database: plain files in a Git
-repository, written through one command-line tool that makes every update safe
-under concurrency.
+<h1 align="center">Memory Tools</h1>
 
-The store runs on Windows (it relies on the native Windows file lock); WSL
-sessions use it through the Windows Python interpreter.
+<p align="center">
+  <b>A shared, persistent memory for coding agents, safe under concurrent writes.</b>
+</p>
+
+<p align="center">
+  <img src="https://img.shields.io/badge/Windows-%2B%20WSL-0078D6?logo=windows&logoColor=white" alt="Windows and WSL">
+  <img src="https://img.shields.io/badge/Python-3.13-3776AB?logo=python&logoColor=white" alt="Python 3.13">
+  <img src="https://img.shields.io/badge/storage-Git%20%2B%20Markdown-F05032?logo=git&logoColor=white" alt="Git and Markdown">
+  <img src="https://img.shields.io/badge/agents-Claude%20Code%20%7C%20Codex-D97757" alt="Claude Code and Codex">
+  <img src="https://img.shields.io/badge/license-MIT-blue" alt="MIT license">
+</p>
+
+Claude Code and Codex read and update the same folder of Markdown notes about
+the user, their projects and their decisions, without a server or a database:
+plain files in a Git repository, written through one command-line tool that
+makes every update safe under concurrency.
+
+> [!NOTE]
+> The store runs on Windows (it relies on the native Windows file lock); WSL
+> sessions use it through the Windows Python interpreter.
 
 ## Why
 
@@ -18,6 +34,26 @@ concurrent writes: two sessions editing the same note at the same time must
 not silently overwrite each other.
 
 ## How an update is saved
+
+```mermaid
+sequenceDiagram
+    participant A as Agent
+    participant C as memory_cli.py
+    participant G as Archive (Git)
+    A->>C: read NOTE.md
+    C->>G: content, SHA-256, HEAD
+    C-->>A: notes with hashes and base HEAD
+    A->>C: apply (operation_id, base_head, reason, changes)
+    C->>C: take the OS lock
+    alt HEAD moved or a hash differs
+        C-->>A: conflict: re-read and recompose
+    else unchanged
+        C->>C: validate the whole candidate archive
+        C->>G: journal, write, commit
+        C-->>A: ok, new HEAD
+    end
+    C->>C: release the lock
+```
 
 - **Read with hashes**: `read` returns the content of each note with its
   SHA-256 and the current Git `HEAD`.
