@@ -41,8 +41,8 @@ sequenceDiagram
     participant C as memory_cli.py
     participant G as Archive (Git)
     A->>C: read NOTE.md
-    C->>G: content, SHA-256, HEAD
-    C-->>A: notes with hashes and base HEAD
+    C->>G: read the notes and HEAD
+    C-->>A: content, SHA-256 and base HEAD
     A->>C: apply (operation_id, base_head, reason, changes)
     C->>C: take the OS lock
     alt HEAD moved or a hash differs
