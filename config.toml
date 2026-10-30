@@ -1,0 +1,7 @@
+root = "~/.claude/memory"  # valore proprio in config.local.toml
+lock_timeout = 10.0
+search_limit = 20
+excerpt_chars = 320
+index_max_lines = 199
+index_max_bytes = 25000
+
