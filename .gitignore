@@ -7,3 +7,14 @@ __pycache__/
 # Configurazione e segreti locali
 config.local.toml
 .env
+
+# Solo in locale: note di lavoro, test e protocollo reale
+CLAUDE.md
+AGENTS.md
+README-LOCALE.md
+PROTOCOL.md
+tasks/
+.claude/
+*.bundle
+*.bak-*
+tests/
